@@ -67,6 +67,9 @@ void main() {
     int next = int(mod(float(face + 1), 4.0));
     vec2 c = corners[face];
     vec2 d = corners[next];
+
+    // FOR LATER ( see https://impossible-box.vercel.app to understand this part )
+
     // if (!(intersect(a, b, c, d) && intersect(aa, bb, c, d))) {
     //     discard;
     // }

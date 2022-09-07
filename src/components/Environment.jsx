@@ -27,20 +27,15 @@ const Environment = ({ heightmapVariable }) => {
     const rainRef = useRef()
     const points = useRef()
     const geometry = new THREE.BufferGeometry()
-    // const count = 4
 
     // Water
     const { gl } = useThree()
     const gpuCompute = useRef()
-    // const heightmapVariable = useRef()
     const waterMesh = useRef()
 
-    // const dropTime = 1
-    // clock.getElapsedTime() * 10
 
     // Positions
     const positions = useRef(new Float32Array(3 * 4))
-    // const posmap = useRef(new THREE.DataTexture(positions.current, 1, 1, THREE.RGBAFormat, THREE.FloatType))
     const drop0 = useRef(new THREE.Vector4(0.0, 0.0, 0.0, 1.0))
     const drop1 = useRef(new THREE.Vector4(0.0, 0.0, 0.0, 1.0))
     const drop2 = useRef(new THREE.Vector4(0.0, 0.0, 0.0, 1.0))
@@ -48,7 +43,6 @@ const Environment = ({ heightmapVariable }) => {
 
 
     const calculatePositions = (uniforms) => {
-
         if (drop0.current.y < -0.5) {
             uniforms['mousePos'].value.set(drop0.current.x * SCALE, drop0.current.z * SCALE);
             const x = (Math.random() - 0.5) * 2.5
@@ -57,10 +51,8 @@ const Environment = ({ heightmapVariable }) => {
             drop0.current.y = 2
             drop0.current.z = z
         }
-        else {
-            // uniforms['mousePos'].value.set(10000, 10000);
+        else
             drop0.current.y -= SPEED
-        }
         if (drop1.current.y < -0.5) {
             const x = (Math.random() - 0.5) * 2.5
             const z = (Math.random() - 0.5) * 2.5
@@ -69,10 +61,8 @@ const Environment = ({ heightmapVariable }) => {
             drop1.current.y = 2.25
             drop1.current.z = z
         }
-        else {
-            // uniforms['mousePos'].value.set(10000, 10000);
+        else
             drop1.current.y -= SPEED
-        }
         if (drop2.current.y < -0.5) {
             const x = (Math.random() - 0.5) * 2.5
             const z = (Math.random() - 0.5) * 2.5
@@ -81,10 +71,9 @@ const Environment = ({ heightmapVariable }) => {
             drop2.current.y = 2.5
             drop2.current.z = z
         }
-        else {
-            // uniforms['mousePos'].value.set(10000, 10000);
+        else
             drop2.current.y -= SPEED
-        }
+
         if (drop3.current.y < -0.5) {
             const x = (Math.random() - 0.5) * 2.5
             const z = (Math.random() - 0.5) * 2.5
@@ -93,52 +82,14 @@ const Environment = ({ heightmapVariable }) => {
             drop3.current.y = 2.75
             drop3.current.z = z
         }
-        else {
-            // uniforms['mousePos'].value.set(10000, 10000);
+        else
             drop3.current.y -= SPEED
-        }
-
-        // for (let i = 0; i < 4; i++) {
-        //     const i3 = i * 4
-        //     if (positions.current[i3 + 1] < -0.5) {
-
-        //         positions.current[i3] = (Math.random() - 0.5) * 2.5
-        //         positions.current[i3 + 1] = 1
-        //         positions.current[i3 + 2] = (Math.random() - 0.5) * 2.5
-
-        //         console.log(positions.current[i3])
-        //     }
-        //     else {
-        //         positions.current[i3 + 1] = positions.current[i3 + 1] - 0.01
-        //     }
-        // }
-        // posmap.current.data = positions.current
-        // posmap.current.needsUpdate = true
     }
-
-    // for (let i = 0; i < count; i++) {
-    // const i3 = i * 3
-    // positions.current[i3] = (Math.random() - 0.5) * 2.5
-    // positions.current[i3 + 1] = (Math.random() - 0.5) * 2.5
-    // positions.current[i3 + 2] = (Math.random() - 0.5) * 2.5
-    // }
     for (let i = 0; i < 4; i++) {
         const i3 = i * 3
         positions.current[i3] = i
-        // positions.current[i3 + 1] = i
-        // positions.current[i3 + 2] = (Math.random() - 0.5) * 2.5
     }
-
-
-    // posmap.current.data = positions.current
-    // posmap.current.needsUpdate = true
-
-    // for (let i = 0; i < 12; i++) {
-    //     positions.current[i] = i
-    // }
     geometry.setAttribute('position', new THREE.BufferAttribute(positions.current, 3))
-
-
 
 
     useEffect(() => {
@@ -168,10 +119,6 @@ const Environment = ({ heightmapVariable }) => {
     }, [gl, heightmapVariable])
 
     useFrame(({ camera, pointer, raycaster, clock }) => {
-
-
-        // console.log(clock.elapsedTime)
-
         // Water
         const uniforms = heightmapVariable.current.material.uniforms;
         raycaster.setFromCamera(pointer, camera);
@@ -186,9 +133,6 @@ const Environment = ({ heightmapVariable }) => {
 
         gpuCompute.current.compute();
         waterMesh.current.material.uniforms['heightmap'].value = gpuCompute.current.getCurrentRenderTarget(heightmapVariable.current).texture;
-        // waterMesh.current.material.uniforms['posmap'] = { value: posmap.current }
-
-
 
         // Rain
         rainRef.current.uniforms.uTime = { value: clock.elapsedTime }

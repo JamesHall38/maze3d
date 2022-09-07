@@ -55,7 +55,7 @@ const MazeShader = ({ color }) => {
                     .replace(fragmentHook, `${fragmentHook}${color}`)}
             uniforms={THREE.UniformsUtils.merge([
                 THREE.ShaderLib['phong'].uniforms,
-                { 'heightmap': { value: null } }
+                { 'heightmap': { value: null }, }
             ])}
             lights
         />
@@ -117,8 +117,6 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
             const point = intersects[0].point;
             handleToggleWall(point.x, point.z)
             controls.current.enableRotate = false
-
-            // lastPos.set(point.x, point.y)
         }
         else if (!mouseDown.current) {
             controls.current.enableRotate = true

@@ -7,7 +7,6 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 
 
-
 const App = () => {
 
   const loading = useRef()
@@ -56,26 +55,15 @@ const App = () => {
       <Canvas
         shadows
         style={{ height: '100vh', width: '100vw' }}
-        // camera={{ position: [0, 30 + window.innerWidth < 750 ? 1.5 : 0, 1 + window.innerWidth < 750 ? 1.5 : 0] }}
         camera={{ position: cameraPosition }}
 
       >
-        {/* <pointLight position={[20, -5, 10]} castShadow /> */}
-        {/* <ambientLight intensity={0.25} /> */}
-
-        {/* <Test /> */}
-
-
-        {/* <directionalLight castShadow position={[300, 400, 175]} /> */}
-
         <directionalLight color='blue' intensity={1.5} position={[20, 30, 20]} />
         <directionalLight color='red' intensity={1.5} position={[-20, 30, -20]} />
         <directionalLight intensity={0.75} position={[20, 30, -20]} />
         <directionalLight intensity={0.75} position={[-20, 30, 20]} />
-
         <ambientLight intensity={2} />
 
-        {/* <directionalLight castShadow intensity={0.6} position={[-100, 350, -200]} /> */}
         <OrbitControls ref={controls} />
 
         <Environment heightmapVariable={heightmapVariable} />
