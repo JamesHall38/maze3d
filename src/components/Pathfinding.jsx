@@ -169,11 +169,20 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }, [grid, nodesPosition, resetPathfinder, animatePathFinding])
 
     const animateWall = useCallback((row, col, removeWalls) => {
-        if (removeWalls) {
+        const x = row * maxValue
+        const y = col * maxValue
+        const i = width * (y - 1) + x
+        const stride = i * 4
+        const value = data0.current[stride]
+
+        if (removeWalls && value === 50) {
+            console.log('0')
             grid[row][col].isWall = false
             applyOnData(data0, heightmap0, row, col, 0)
         }
-        else {
+        else if (value === 0) {
+            console.log("50")
+
             grid[row][col].isWall = true
             applyOnData(data0, heightmap0, row, col, 50)
         }

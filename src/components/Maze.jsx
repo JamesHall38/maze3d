@@ -74,7 +74,7 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
     const pathMesh = useRef()
     const raycastRef = useRef()
 
-    function handleToggleWall(x, y) {
+    function handleToggleWall(x, y) {   ///  <-----------
         if (!mouseDown.current) return
 
         const row = Math.round((255 / 2 + x * 200) / 255 * 40)
@@ -113,7 +113,7 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
         const intersects = raycaster.intersectObject(raycastRef.current);
         if (intersects.length > 0) {
             const point = intersects[0].point;
-            // handleToggleWall(point.x, point.z)
+            handleToggleWall(point.x, point.z)
             controls.current.enableRotate = false
 
             // lastPos.set(point.x, point.y)
