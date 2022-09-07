@@ -101,9 +101,11 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
         setMountedMaze(true)
 
         document.addEventListener('mousedown', handleMouseDown)
+        document.addEventListener('touchstart', handleMouseDown)
         document.addEventListener('mouseup', handleMouseUp)
         return () => {
             document.removeEventListener('mousedown', handleMouseDown)
+            document.removeEventListener('touch', handleMouseDown)
             document.removeEventListener('mouseup', handleMouseUp)
         }
     }, [setMountedMaze, controls])
