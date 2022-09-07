@@ -2,8 +2,8 @@ import { useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js'
 import * as THREE from 'three'
-import Rain from '../shaders/Rain'
-import Water from '../shaders/Water'
+import Rain from './shaders/Rain'
+import Water from './shaders/Water'
 
 const WIDTH = 128
 const BOUNDS = 512
