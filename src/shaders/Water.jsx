@@ -8,6 +8,8 @@ const Water = {
 uniform vec2 mousePos;
 uniform float mouseSize;
 uniform float viscosityConstant;
+uniform float uClear;
+
 void main()	{
     vec2 cellSize = 1.0 / resolution.xy;
     vec2 uv = gl_FragCoord.xy * cellSize;
@@ -30,7 +32,7 @@ void main()	{
     gl_FragColor = heightmapValue;
     
     if((gl_FragCoord.x > 31.0 && gl_FragCoord.x < 97.0) &&( gl_FragCoord.y > 31.0 && gl_FragCoord.y < 97.0)) {
-        gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        gl_FragColor = vec4(uClear,0.0,0.0,1.0);
     }
 }
 `,

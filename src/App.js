@@ -16,6 +16,8 @@ const App = () => {
   const clear = useRef(false)
   const controls = useRef()
 
+  const heightmapVariable = useRef()
+
   const cameraPosition = [0, 2 + (window.innerWidth < 750 ? 1 : 0), 1 + (window.innerWidth < 750 ? 1 : 0)]
 
   return (
@@ -32,7 +34,13 @@ const App = () => {
           <div className="liquid resolve"></div>
         </button>
 
-        <button onClick={() => clear.current()} >
+        <button onClick={() => {
+          clear.current()
+          heightmapVariable.current.material.uniforms['uClear'] = { value: 0.0 };
+          setTimeout(() => {
+            heightmapVariable.current.material.uniforms['uClear'] = { value: 1.0 };
+          }, 50)
+        }} >
           <span>Clear</span>
           <div className="liquid clear"></div>
         </button>
@@ -70,7 +78,7 @@ const App = () => {
         {/* <directionalLight castShadow intensity={0.6} position={[-100, 350, -200]} /> */}
         <OrbitControls ref={controls} />
 
-        <Environment />
+        <Environment heightmapVariable={heightmapVariable} />
         <Pathfinding
           loading={loading}
 

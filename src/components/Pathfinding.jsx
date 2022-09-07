@@ -134,8 +134,8 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }, [timeout])
 
     const resetPathfinder = useCallback((keepWalls, clearPath) => {
-        if (!clearPath && !keepWalls)
-            timeout.forEach(e => { clearTimeout(e) })
+        // if (!clearPath && !keepWalls)
+        timeout.forEach(e => { clearTimeout(e) })
 
         for (let row = 0; row < grid.length; row++) {
             for (let col = 0; col < grid[0].length; col++) {
@@ -176,12 +176,12 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         const value = data0.current[stride]
 
         if (removeWalls && value === 50) {
-            console.log('0')
+            resetPathfinder(true, true)
             grid[row][col].isWall = false
             applyOnData(data0, heightmap0, row, col, 0)
         }
-        else if (value === 0) {
-            console.log("50")
+        else if (!removeWalls && value === 0) {
+            resetPathfinder(true, true)
 
             grid[row][col].isWall = true
             applyOnData(data0, heightmap0, row, col, 50)
@@ -189,7 +189,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         if (grid[row][col].isStart || grid[row][col].isFinish) {
             grid[row][col].starto = true
         }
-    }, [grid])
+    }, [grid, resetPathfinder])
 
     const generateMaze = useCallback(() => {
         resetPathfinder()

@@ -22,7 +22,7 @@ const fragColor1 = `
 // varying vec3 vPosition;
 `
 
-const Environment = () => {
+const Environment = ({ heightmapVariable }) => {
     // Rain
     const rainRef = useRef()
     const points = useRef()
@@ -32,7 +32,7 @@ const Environment = () => {
     // Water
     const { gl } = useThree()
     const gpuCompute = useRef()
-    const heightmapVariable = useRef()
+    // const heightmapVariable = useRef()
     const waterMesh = useRef()
 
     // const dropTime = 1
@@ -163,7 +163,9 @@ const Environment = () => {
         heightmapVariable.current.material.uniforms['mousePos'] = { value: new THREE.Vector2(10000, 10000) };
         heightmapVariable.current.material.uniforms['mouseSize'] = { value: effectController.mouseSize };
         heightmapVariable.current.material.uniforms['viscosityConstant'] = { value: effectController.viscosity };
-    }, [gl])
+        heightmapVariable.current.material.uniforms['uClear'] = { value: 1.0 };
+
+    }, [gl, heightmapVariable])
 
     useFrame(({ camera, pointer, raycaster, clock }) => {
 
