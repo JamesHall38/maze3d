@@ -42,6 +42,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }
 
     const timeout = useMemo(() => [], [])
+    const pathIsSet = useRef(false)
     const [mountedMaze, setMountedMaze] = useState(false)
 
     const nodesPosition = useMemo(() => {
@@ -135,6 +136,8 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
 
     const resetPathfinder = useCallback((keepWalls, clearPath) => {
         // if (!clearPath && !keepWalls)
+        if (pathIsSet.current)
+            pathIsSet.current = false
         timeout.forEach(e => { clearTimeout(e) })
 
         for (let row = 0; row < grid.length; row++) {
@@ -160,6 +163,8 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
 
     const visualizePathFinding = useCallback(() => {
         resetPathfinder(true)
+        pathIsSet.current = true
+
         const startNode = grid[nodesPosition.start.row][nodesPosition.start.col]
         const finishNode = grid[nodesPosition.finish.row][nodesPosition.finish.col]
 
@@ -175,13 +180,17 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         const stride = i * 4
         const value = data0.current[stride]
 
-        if (removeWalls && value === 50) {
+        if (pathIsSet.current) {
             resetPathfinder(true, true)
+        }
+
+
+        if (removeWalls && value === 50) {
             grid[row][col].isWall = false
             applyOnData(data0, heightmap0, row, col, 0)
         }
         else if (!removeWalls && value === 0) {
-            resetPathfinder(true, true)
+            // resetPathfinder(true, true)
 
             grid[row][col].isWall = true
             applyOnData(data0, heightmap0, row, col, 50)
