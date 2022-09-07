@@ -3,10 +3,45 @@ import Maze from './Maze'
 import { astar, getNodesInShortestPathOrder } from '../algorithms/astar'
 import { recursiveDivision } from '../algorithms/recursiveDivision'
 import { useThree } from '@react-three/fiber'
+import * as THREE from 'three'
+
+const WIDTH = 128 * 2
+const width = WIDTH * 2 - 21;
+const height = WIDTH * 2 - 21;
+const size = width * height;
+const maxValue = 12
 
 
-const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, clear, setClear }) => {
-    const { scene, camera } = useThree()
+const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, clear, setClear, controls }) => {
+    const data0 = useRef(new Float32Array(8 * size))
+    const data1 = useRef(new Float32Array(8 * size))
+    const data2 = useRef(new Float32Array(8 * size))
+    const heightmap0 = useRef(new THREE.DataTexture(data0.current, width, height, THREE.RGBAFormat, THREE.FloatType))
+    const heightmap1 = useRef(new THREE.DataTexture(data1.current, width, height, THREE.RGBAFormat, THREE.FloatType))
+    const heightmap2 = useRef(new THREE.DataTexture(data2.current, width, height, THREE.RGBAFormat, THREE.FloatType))
+
+    const applyOnData = (dataRef, heightmapRef, row, col, value) => {
+        for (let ind = 0; ind < maxValue; ind++) {
+            for (let din = 0; din < maxValue; din++) {
+                const x = row * maxValue + din
+                const y = col * maxValue + ind
+                const i = width * (y - 1) + x
+                const stride = i * 4
+                const xValue = (y % maxValue < 6) ? - y % maxValue : - y % maxValue + 12
+                const yValue = (x % maxValue < 6) ? - x % maxValue : - x % maxValue + 12
+
+                dataRef.current[stride] = value
+                dataRef.current[stride + 1] = xValue
+                dataRef.current[stride + 2] = yValue
+
+                if (x < 2 || y < 2 || x > width - 2 || y > width - 2)
+                    dataRef.current[stride] = 0
+            }
+        }
+        heightmapRef.current.data = dataRef.current
+        heightmapRef.current.needsUpdate = true
+    }
+
     const timeout = useMemo(() => [], [])
     const [mountedMaze, setMountedMaze] = useState(false)
 
@@ -15,23 +50,22 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
             rowLenght: Math.floor(window.innerHeight / 30) + ((Math.floor(window.innerHeight / 30)) % 2 ? 0 : 1),
             colLenght: Math.floor(window.innerWidth / 30) + ((Math.floor(window.innerWidth / 30)) % 2 ? 0 : 1),
             start: {
-                row: 3,
-                col: 3
+                row: 20,
+                col: 0
             },
             finish: {
-                row: Math.floor(window.innerHeight / 30) + ((Math.floor(window.innerHeight / 30)) % 2 ? 0 : 1) - 4,
-                col: Math.floor(window.innerWidth / 30) + ((Math.floor(window.innerWidth / 30)) % 2 ? 0 : 1) - 4
+                row: 20,
+                col: 40
             }
         }
-        camera.position.set(pos.colLenght / 2, -pos.rowLenght / 2, 25)
         return pos
-    }, [camera])
+    }, [])
 
     const grid = useMemo(() => {
         const newGrid = []
-        for (let row = 0; row < nodesPosition.rowLenght; row++) {
+        for (let row = 0; row < 41; row++) {
             const currentRow = []
-            for (let col = 0; col < nodesPosition.colLenght; col++) {
+            for (let col = 0; col < 41; col++) {
                 currentRow.push(
                     {
                         col,
@@ -57,13 +91,14 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
             timeout.push(setTimeout(() => {
                 const node = nodesInShortestPathOrder[i]
                 if (!node.isStart && !node.isFinish) {
-                    const selectedNode = scene.getObjectByName(`node-${node.row}-${node.col}`)
-                    selectedNode.material.color.set('#c41e3d')
-                    selectedNode.position.z = 0.25
+                    applyOnData(data1, heightmap1, node.row, node.col, 0)
+                    applyOnData(data2, heightmap2, node.row, node.col, 65)
                 }
             }, 50 * i))
         }
-    }, [timeout, scene])
+    }, [timeout])
+
+
 
     const animatePathFinding = useCallback((visitedNodesInOrder, nodesInShortestPathOrder) => {
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
@@ -75,58 +110,54 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
             }
             timeout.push(setTimeout(() => {
                 const node = visitedNodesInOrder[i]
-                if (!node.isStart && !node.isFinish) {
-                    const selectedNode = scene.getObjectByName(`node-${node.row}-${node.col}`)
-                    selectedNode.material.color.set('#dcccbb')
-                    selectedNode.position.z = 0.5
+                if (!node.isStart && !node.isFinish
+                    && !(node.row === 20 && (node.col === 39 || node.col === 1))) {
+                    node.visited = true
+                    applyOnData(data1, heightmap1, node.row, node.col, 30)
                 }
             }, 10 * i))
         }
-    }, [animateShortestPath, timeout, scene])
+    }, [animateShortestPath, timeout])
 
     const animateMaze = useCallback((nodesInShortestPathOrder) => {
         for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
             timeout.push(setTimeout(() => {
                 const node = nodesInShortestPathOrder[i]
 
-                if (!node.isStart && !node.isFinish) {
-                    const selectedNode = scene.getObjectByName(`node-${node.row}-${node.col}`)
-                    selectedNode.material.color.set('#004e75')
-                    selectedNode.position.z = 1
-
+                if (!node.isStart && !node.isFinish
+                    && !(node.row === 20 && (node.col === 39 || node.col === 1))) {
                     node.isWall = true
+                    applyOnData(data0, heightmap0, node.row, node.col, 50)
                 }
-            }, 20 * i))
+            }, 5 * i))
 
         }
-    }, [timeout, scene])
+    }, [timeout])
 
-    const resetPathfinder = useCallback((keepWalls) => {
-        timeout.forEach(e => { clearTimeout(e) })
+    const resetPathfinder = useCallback((keepWalls, clearPath) => {
+        if (!clearPath && !keepWalls)
+            timeout.forEach(e => { clearTimeout(e) })
 
         for (let row = 0; row < grid.length; row++) {
             for (let col = 0; col < grid[0].length; col++) {
-
-                const selectedNode = scene.getObjectByName(`node-${row}-${col}`)
-
                 grid[row][col].distance = Infinity
                 grid[row][col].isVisited = false
+                applyOnData(data1, heightmap1, row, col, 0)
+                applyOnData(data2, heightmap2, row, col, 0)
 
-                if (!(keepWalls && grid[row][col].isWall)) {
-                    grid[row][col].previousNode = null
-
-                    grid[row][col].isWall = false
-
-                    selectedNode.material.color.set('#181a1b')
-                    selectedNode.position.z = 0
+                if (!clearPath) {
+                    if (!(keepWalls && grid[row][col].isWall)) {
+                        grid[row][col].previousNode = null
+                        grid[row][col].isWall = false
+                        applyOnData(data0, heightmap0, row, col, 0)
+                    }
                 }
                 if (grid[row][col].isStart || grid[row][col].isFinish) {
-                    selectedNode.material.color.set('red')
-                    selectedNode.position.z = 1
+                    grid[row][col].starto = true
                 }
             }
         }
-    }, [grid, timeout, scene])
+    }, [grid, timeout])
 
     const visualizePathFinding = useCallback(() => {
         resetPathfinder(true)
@@ -139,26 +170,19 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }, [grid, nodesPosition, resetPathfinder, animatePathFinding])
 
     const animateWall = useCallback((row, col, removeWalls) => {
-        const selectedNode = scene.getObjectByName(`node-${row}-${col}`)
-
+        resetPathfinder(true, true)
         if (removeWalls) {
-            selectedNode.material.color.set('#181a1b')
-            selectedNode.position.z = 0
             grid[row][col].isWall = false
+            applyOnData(data0, heightmap0, row, col, 0)
         }
         else {
-            selectedNode.material.color.set('#004e75')
-            selectedNode.position.z = 1
             grid[row][col].isWall = true
+            applyOnData(data0, heightmap0, row, col, 50)
         }
-
         if (grid[row][col].isStart || grid[row][col].isFinish) {
-            selectedNode.material.color.set('red')
-            selectedNode.position.z = 1
+            grid[row][col].starto = true
         }
-
-
-    }, [grid, scene])
+    }, [grid])
 
     const generateMaze = useCallback(() => {
         resetPathfinder()
@@ -166,7 +190,6 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         const finishNode = grid[nodesPosition.finish.row][nodesPosition.finish.col]
         const maze = recursiveDivision(grid, startNode, finishNode)
         animateMaze(maze)
-        animateWall(0, grid[0].length - 1)
         return maze.length
     }, [nodesPosition, grid, resetPathfinder, animateWall, animateMaze])
 
@@ -176,13 +199,14 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         const time = generateMaze()
         const delay = setTimeout(() => {
             visualizePathFinding()
-        }, 20 * time)
+        }, 5 * time)
         return () => { clearTimeout(delay) }
     }, [generateMaze, visualizePathFinding])
 
     useEffect(() => {
+        console.log('???' + heightmap0)
         if (!isMounted.current && mountedMaze) {
-            onMount()
+            // onMount()
             isMounted.current = true
             loading.current.style.display = 'none'
             visualize.current = visualizePathFinding
@@ -199,6 +223,10 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         < Maze nodesPosition={nodesPosition} grid={grid}
             animateWall={animateWall}
             setMountedMaze={setMountedMaze}
+            heightmap0={heightmap0}
+            heightmap1={heightmap1}
+            heightmap2={heightmap2}
+            controls={controls}
         />
     )
 }

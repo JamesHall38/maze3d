@@ -1,8 +1,11 @@
 import './App.css'
 import './Buttons.css'
-import Pathfinding from './Components/Pathfinding'
+import Pathfinding from './components/Pathfinding'
+import Environment from './components/Environment'
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
+
 
 
 const App = () => {
@@ -11,6 +14,7 @@ const App = () => {
   const visualize = useRef(false)
   const generate = useRef(false)
   const clear = useRef(false)
+  const controls = useRef()
 
   return (
     <div className="App">
@@ -42,18 +46,35 @@ const App = () => {
       <Canvas
         shadows
         style={{ height: '100vh', width: '100vw' }}
+        camera={{ position: [0, 2, 1] }}
       >
-        <pointLight position={[20, -5, 10]} castShadow />
-        <ambientLight intensity={0.25} />
+        {/* <pointLight position={[20, -5, 10]} castShadow /> */}
+        {/* <ambientLight intensity={0.25} /> */}
 
+        {/* <Test /> */}
 
         {console.log('renderAPP')}
+
+        {/* <directionalLight castShadow position={[300, 400, 175]} /> */}
+
+        <directionalLight color='blue' intensity={1.5} position={[20, 30, 20]} />
+        <directionalLight color='red' intensity={1.5} position={[-20, 30, -20]} />
+        <directionalLight intensity={0.75} position={[20, 30, -20]} />
+        <directionalLight intensity={0.75} position={[-20, 30, 20]} />
+
+        <ambientLight intensity={2} />
+
+        {/* <directionalLight castShadow intensity={0.6} position={[-100, 350, -200]} /> */}
+        <OrbitControls ref={controls} />
+
+        <Environment />
         <Pathfinding
           loading={loading}
 
           visualize={visualize}
           generate={generate}
           clear={clear}
+          controls={controls}
         />
 
       </Canvas>
