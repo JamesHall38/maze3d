@@ -72,6 +72,7 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
     const wallMesh = useRef()
     const visitedMesh = useRef()
     const pathMesh = useRef()
+    const raycastRef = useRef()
 
     function handleToggleWall(x, y) {
         if (!mouseDown.current) return
@@ -109,10 +110,10 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
 
     useFrame(({ camera, pointer, raycaster }) => {
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObject(pathMesh.current);
+        const intersects = raycaster.intersectObject(raycastRef.current);
         if (intersects.length > 0) {
             const point = intersects[0].point;
-            handleToggleWall(point.x, point.z)
+            // handleToggleWall(point.x, point.z)
             controls.current.enableRotate = false
 
             // lastPos.set(point.x, point.y)
@@ -143,11 +144,11 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
                 <planeBufferGeometry args={[BOUNDS, BOUNDS, WIDTH, WIDTH]} />
                 <MazeShader color={pathColor} />
             </mesh>
-            {/* <mesh position={[0, 15, 0]} rotation={[- Math.PI / 2, 0, 0]}>
+            <mesh ref={raycastRef} position={[0, -175, 0]} rotation={[- Math.PI / 2, 0, 0]}>
                 <planeBufferGeometry args={[BOUNDS, BOUNDS, 2, 2]} />
-                <meshStandardMaterial color='purple' />
-            </mesh> */}
-        </group>
+                <meshStandardMaterial visible={false} />
+            </mesh>
+        </group >
     )
 }
 

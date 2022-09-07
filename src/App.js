@@ -16,7 +16,6 @@ const App = () => {
   const clear = useRef(false)
   const controls = useRef()
 
-  console.log(window.innerWidth)
   const cameraPosition = [0, 2 + (window.innerWidth < 750 ? 1 : 0), 1 + (window.innerWidth < 750 ? 1 : 0)]
 
   return (
