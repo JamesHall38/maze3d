@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Maze from './Maze'
-import { astar, getNodesInShortestPathOrder } from './algorithms/astar'
-import { recursiveDivision } from './algorithms/recursiveDivision'
+import { astar, getNodesInShortestPathOrder } from '../algorithms/astar'
+import { recursiveDivision } from '../algorithms/recursiveDivision'
 import * as THREE from 'three'
 
 const WIDTH = 128 * 2
