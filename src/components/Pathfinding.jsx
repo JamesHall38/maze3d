@@ -169,7 +169,6 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }, [grid, nodesPosition, resetPathfinder, animatePathFinding])
 
     const animateWall = useCallback((row, col, removeWalls) => {
-        resetPathfinder(true, true)
         if (removeWalls) {
             grid[row][col].isWall = false
             applyOnData(data0, heightmap0, row, col, 0)
@@ -181,7 +180,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         if (grid[row][col].isStart || grid[row][col].isFinish) {
             grid[row][col].starto = true
         }
-    }, [grid, resetPathfinder])
+    }, [grid])
 
     const generateMaze = useCallback(() => {
         resetPathfinder()

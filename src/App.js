@@ -16,6 +16,9 @@ const App = () => {
   const clear = useRef(false)
   const controls = useRef()
 
+  console.log(window.innerWidth)
+  const cameraPosition = [0, 2 + (window.innerWidth < 750 ? 1 : 0), 1 + (window.innerWidth < 750 ? 1 : 0)]
+
   return (
     <div className="App">
 
@@ -46,7 +49,9 @@ const App = () => {
       <Canvas
         shadows
         style={{ height: '100vh', width: '100vw' }}
-        camera={{ position: [0, 2, 1] }}
+        // camera={{ position: [0, 30 + window.innerWidth < 750 ? 1.5 : 0, 1 + window.innerWidth < 750 ? 1.5 : 0] }}
+        camera={{ position: cameraPosition }}
+
       >
         {/* <pointLight position={[20, -5, 10]} castShadow /> */}
         {/* <ambientLight intensity={0.25} /> */}
