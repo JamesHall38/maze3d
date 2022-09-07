@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Maze from './Maze'
 import { astar, getNodesInShortestPathOrder } from '../algorithms/astar'
 import { recursiveDivision } from '../algorithms/recursiveDivision'
-import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const WIDTH = 128 * 2
@@ -182,7 +181,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         if (grid[row][col].isStart || grid[row][col].isFinish) {
             grid[row][col].starto = true
         }
-    }, [grid])
+    }, [grid, resetPathfinder])
 
     const generateMaze = useCallback(() => {
         resetPathfinder()
@@ -191,7 +190,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
         const maze = recursiveDivision(grid, startNode, finishNode)
         animateMaze(maze)
         return maze.length
-    }, [nodesPosition, grid, resetPathfinder, animateWall, animateMaze])
+    }, [nodesPosition, grid, resetPathfinder, animateMaze])
 
 
     const isMounted = useRef(false)
@@ -204,7 +203,6 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     }, [generateMaze, visualizePathFinding])
 
     useEffect(() => {
-        console.log('???' + heightmap0)
         if (!isMounted.current && mountedMaze) {
             // onMount()
             isMounted.current = true

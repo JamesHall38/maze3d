@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js'
 import * as THREE from 'three'
 import Rain from '../shaders/Rain'
@@ -203,7 +203,7 @@ const Environment = () => {
                 <shaderMaterial
                     uniforms={THREE.UniformsUtils.merge([THREE.ShaderLib['phong'].uniforms, { 'heightmap': { value: null } }])}
                     vertexShader={Water.waterVertexShader}
-                    onBeforeCompile={(shader) => console.log(shader)}
+                    // onBeforeCompile={(shader) => console.log(shader)}
                     fragmentShader={
                         THREE.ShaderChunk['meshphong_frag']
                             .replace(fragmentHook, `${fragmentHook}${fragColor}`)

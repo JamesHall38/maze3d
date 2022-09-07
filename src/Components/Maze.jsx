@@ -85,18 +85,18 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
         }
         animateWall(row, col, removeWalls.current)
     }
-    const handleMouseDown = () => {
-        mouseDown.current = true
-    }
-    const handleMouseUp = () => {
-        firstToggle.current = false
-        mouseDown.current = false
-        isDragging.current = false
-        controls.current.enabled = true
-    }
 
 
     useEffect(() => {
+        const handleMouseDown = () => {
+            mouseDown.current = true
+        }
+        const handleMouseUp = () => {
+            firstToggle.current = false
+            mouseDown.current = false
+            isDragging.current = false
+            controls.current.enabled = true
+        }
         setMountedMaze(true)
 
         document.addEventListener('mousedown', handleMouseDown)
@@ -105,7 +105,7 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
             document.removeEventListener('mousedown', handleMouseDown)
             document.removeEventListener('mouseup', handleMouseUp)
         }
-    }, [setMountedMaze])
+    }, [setMountedMaze, controls])
 
     useFrame(({ camera, pointer, raycaster }) => {
         raycaster.setFromCamera(pointer, camera);

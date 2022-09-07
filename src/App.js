@@ -53,7 +53,6 @@ const App = () => {
 
         {/* <Test /> */}
 
-        {console.log('renderAPP')}
 
         {/* <directionalLight castShadow position={[300, 400, 175]} /> */}
 
