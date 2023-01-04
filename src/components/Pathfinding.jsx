@@ -216,7 +216,7 @@ const Pathfinding = ({ loading, visualize, setVisualize, generate, setGenerate, 
     useEffect(() => {
         if (!isMounted.current && mountedMaze) {
             isMounted.current = true
-            loading.current.style.display = 'none'
+            // loading.current.style.display = 'none'
             visualize.current = visualizePathFinding
             clear.current = resetPathfinder
             generate.current = generateMaze

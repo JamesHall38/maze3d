@@ -1,28 +1,32 @@
 import './App.css'
 import './Buttons.css'
 import Pathfinding from './components/Pathfinding'
-import Environment from './components/Environment'
-import { useRef } from 'react'
+// import Environment from './components/Environment'
+import ProceduralHouse from './components/House/ProceduralHouse'
+import { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Environment } from '@react-three/drei'
+import { Perf } from 'r3f-perf'
+import { useControls } from 'leva'
 
 
 const App = () => {
 
-  const loading = useRef()
   const visualize = useRef(false)
   const generate = useRef(false)
   const clear = useRef(false)
   const controls = useRef()
-
   const heightmapVariable = useRef()
 
-  const cameraPosition = [0, 2 + (window.innerWidth < 750 ? 1 : 0), 1 + (window.innerWidth < 750 ? 1 : 0)]
+  const { Performances: perfVisible, maze } = useControls({
+    Performances: false,
+    maze: false
+  })
 
   return (
     <div className="App">
 
-      <div className="buttons">
+      {maze && <div className="buttons">
         <button onClick={() => generate.current()} >
           <span>Generate</span>
           <div className="liquid"></div>
@@ -43,40 +47,53 @@ const App = () => {
           <span>Clear</span>
           <div className="liquid clear"></div>
         </button>
-      </div>
+      </div>}
 
-      <div className="loading" ref={loading} >
-        <div className="loader">
-          <div className="loader-wheel"></div>
-          <div className="loader-text"></div>
+      <Suspense fallback={
+        <div className="loading" >
+          <div className="loader">
+            <div className="loader-wheel"></div>
+            <div className="loader-text"></div>
+          </div>
         </div>
-      </div>
+      } >
+        <Canvas
+          shadows
+          style={{ height: '100vh', width: '100vw' }}
+          camera={{ position: [3, 3, 3] }}
+        >
+          {perfVisible &&
+            <Perf position='top-left' />
+          }
+          <OrbitControls ref={controls} />
 
-      <Canvas
-        shadows
-        style={{ height: '100vh', width: '100vw' }}
-        camera={{ position: cameraPosition }}
+          <Environment preset='night' />
+          {/* <BakeShadows /> */}
 
-      >
-        <directionalLight color='blue' intensity={1.5} position={[20, 30, 20]} />
-        <directionalLight color='red' intensity={1.5} position={[-20, 30, -20]} />
-        <directionalLight intensity={0.75} position={[20, 30, -20]} />
-        <directionalLight intensity={0.75} position={[-20, 30, 20]} />
-        <ambientLight intensity={2} />
+          {!maze &&
+            <>
+              <pointLight color="red" intensity={0.25} position={[0.4, 0.2, 0.4]} shadow-normalBias={0.04} castShadow />
+              <pointLight color="red" intensity={0.25} position={[0.4, 0.8, 0]} shadow-normalBias={0.04} castShadow />
+              <pointLight color="red" intensity={0.25} position={[0, 1.4, 0.4]} shadow-normalBias={0.04} castShadow />
 
-        <OrbitControls ref={controls} />
+              <ProceduralHouse position={[0, -1, 0]} scale={0.15} position-y={-1} />
+            </>
+          }
+          {maze &&
+            <>
+              <directionalLight intensity={1} />
+              <Pathfinding
+                // loading={loading}
+                visualize={visualize}
+                generate={generate}
+                clear={clear}
+                controls={controls}
+              />
+            </>
+          }
 
-        <Environment heightmapVariable={heightmapVariable} />
-        <Pathfinding
-          loading={loading}
-
-          visualize={visualize}
-          generate={generate}
-          clear={clear}
-          controls={controls}
-        />
-
-      </Canvas>
+        </Canvas>
+      </Suspense>
     </div >
   )
 }

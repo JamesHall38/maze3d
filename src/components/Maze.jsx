@@ -74,7 +74,7 @@ const Maze = ({ grid, animateWall, setMountedMaze, heightmap0, heightmap1, heigh
     const pathMesh = useRef()
     const raycastRef = useRef()
 
-    function handleToggleWall(x, y) {   ///  <-----------
+    function handleToggleWall(x, y) {
         if (!mouseDown.current) return
 
         const row = Math.round((255 / 2 + x * 200) / 255 * 40)
